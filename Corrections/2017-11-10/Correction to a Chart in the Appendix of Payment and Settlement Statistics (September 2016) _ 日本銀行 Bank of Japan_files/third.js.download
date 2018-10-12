@@ -1,0 +1,63 @@
+// JavaScript Third
+
+//side-nav
+$(function(){
+	$(".side-nav dt span").click(function(){
+		$(this).parent().next("dd").slideToggle();
+		$(this).parent().next("dd").siblings("dd").slideUp();
+		$(this).parent("dt").toggleClass("open");
+		$(this).parent().siblings("dt").removeClass("open");
+	});
+	$(".side-nav p").click(function(){
+		$(this).next("ul").slideToggle();
+		$(this).children("span").toggleClass("open");
+        /*201805 サイドメニューをfocusで背景色切り替え*/
+	}).focusin(function(){
+            $(this).addClass("active");
+        }).focusout(function(){
+        $(this).removeClass("active");
+    });
+});
+//statistics
+$(function(){
+	bojstatisticstab = $.cookie( "bojstatisticstab" );
+	if(bojstatisticstab == "#tab1"){
+		$('.statistics-box:first').show();
+		$('#statistics-tab li:first').addClass('active');
+		}else{
+		$('.statistics-box:nth-child(2)').show();
+		$('#statistics-tab li:nth-child(2)').addClass('active');
+			};
+	
+	$('#statistics-tab li').on('click', function() {
+		$('#statistics-tab li').removeClass('active');
+		$(this).addClass('active');
+		$('.statistics-box').hide();
+		$($(this).find('a').attr('href')).fadeIn();
+		
+		var chgtab = $(this).find('a').attr('href');
+		if(chgtab == "#tab-statistics1"){
+			chgtab="#tab1";
+		}else{
+			chgtab="#tab2";
+		};
+		$.cookie( "bojstatisticstab" , chgtab );
+
+		return false;
+	});
+});
+
+//table
+$(window).ready(function () {
+	$('.js-tbl').ReStable({keepHtml: true, rowHeaders: false, maxWidth: 480});
+});
+
+//matchHeight
+$(function(){
+	$('.policyboard li').matchHeight();
+});
+
+//sidenavigation href
+$(function(){
+	$(".side-nav a[href='']").removeAttr("href");
+});

@@ -1,0 +1,1089 @@
+// JavaScript Search
+////////////////////////////////////////////////////////////////////////////////
+// metainfoマッピング
+// 1:index_nichiji（index日時）
+// 2:officer（役員名）
+// 3:（未使用）
+// 4:（未使用）
+// 5:seqno（連番）
+
+////////////////////////////////////////////////////////////////////////////////
+// 定数
+////////////////////////////////////////////////////////////////////////////////
+const IDX_LANGUAGE_JP						= 0;
+const IDX_LANGUAGE_EN						= 1;
+
+const IDX_CATEGORY_ALL						= 0;
+const IDX_CATEGORY_RONBUN					= 1;
+const IDX_CATEGORY_KOEN						= 2;
+const IDX_CATEGORY_KOHYO					= 3;
+
+const IDX_TARGET_PAGE						= 0;
+const IDX_TARGET_TITLE						= 1;
+
+////////////////////////////////////////////////////////////////////////////////
+// indexnameリスト
+// indexname[言語][カテゴリ][検索箇所]
+var indexname_list = [
+	[
+		['qsidxpj01','qsidxtj01'],
+		['qsidxpj02','qsidxtj02'],
+		['qsidxpj03','qsidxtj03'],
+		['qsidxpj04','qsidxtj04'],
+	],
+	[
+		['qsidxpe01','qsidxte01'],
+		['qsidxpe02','qsidxte02'],
+		['qsidxpe03','qsidxte03'],
+		['qsidxpe04','qsidxte04']
+	]
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 3.3.1 レポート・シリーズ名－contentgroup対応表
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// 日本銀行レポート・調査論文対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_brp_contentgroup_list = [
+	"10_07_brp",
+	"10_07_brp_fmr",
+	"10_07_brp_fsr",
+	"10_07_brp_psr",
+	"10_07_brp_rer",
+	"10_07_brp_rer_past-rer",
+	"10_07_brp_ron-1996",
+	"10_07_brp_ron-2001",
+	"10_07_brp_ron-2006",
+	"10_07_brp_ron-2011",
+	"10_07_brp_ron-2016",
+	"20_07_brp",
+	"20_07_brp_fmr",
+	"20_07_brp_fsr",
+	"20_07_brp_psr",
+	"20_07_brp_rer",
+	"20_07_brp_ron-1996",
+	"20_07_brp_ron-2001",
+	"20_07_brp_ron-2006",
+	"20_07_brp_ron-2011",
+	"20_07_brp_ron-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// ワーキングペーパー・日銀レビュー・日銀リサーチラボ対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_wps_rev_contentgroup_list = [
+	"10_07_wpre",
+	"10_07_wpre_ec",
+	"10_07_wpre_lab",
+	"10_07_wpre_mkr",
+	"10_07_wpre_rev-2004",
+	"10_07_wpre_rev-2006",
+	"10_07_wpre_rev-2011",
+	"10_07_wpre_rev-2016",
+	"10_07_wpre_wps-1998",
+	"10_07_wpre_wps-2001",
+	"10_07_wpre_wps-2006",
+	"10_07_wpre_wps-2011",
+	"10_07_wpre_wps-2016",
+	"20_07_wpre",
+	"20_07_wpre_ec",
+	"20_07_wpre_lab",
+	"20_07_wpre_mkr",
+	"20_07_wpre_rev-2004",
+	"20_07_wpre_rev-2006",
+	"20_07_wpre_rev-2011",
+	"20_07_wpre_rev-2016",
+	"20_07_wpre_wps-1998",
+	"20_07_wpre_wps-2001",
+	"20_07_wpre_wps-2006",
+	"20_07_wpre_wps-2011",
+	"20_07_wpre_wps-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// その他報告書等対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_other_release_contentgroup_list = [
+	"10_07_other",
+	"20_07_other"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 金融システムレポート・金融市場レポート対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_brp_fsr_contentgroup_list = [
+	"10_07_brp_fsr",
+	"10_07_brp_fmr",
+	"20_07_brp_fsr",
+	"20_07_brp_fmr"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 決済システムレポート対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_brp_psr_contentgroup_list = [
+	"10_07_brp_psr",
+	"20_07_brp_psr"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// さくらレポート対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_brp_rer_contentgroup_list = [
+	"10_07_brp_rer",
+	"10_07_brp_rer_past-rer",
+	"20_07_brp_rer"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 調査論文対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_brp_ron_contentgroup_list = [
+	"10_07_brp_ron-1996",
+	"10_07_brp_ron-2001",
+	"10_07_brp_ron-2006",
+	"10_07_brp_ron-2011",
+	"10_07_brp_ron-2016",
+	"20_07_brp_ron-1996",
+	"20_07_brp_ron-2001",
+	"20_07_brp_ron-2006",
+	"20_07_brp_ron-2011",
+	"20_07_brp_ron-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 日本銀行ワーキングペーパーシリーズ対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_wps_rev_wps_contentgroup_list = [
+	"10_07_wpre_wps-1998",
+	"10_07_wpre_wps-2001",
+	"10_07_wpre_wps-2006",
+	"10_07_wpre_wps-2011",
+	"10_07_wpre_wps-2016",
+	"20_07_wpre_wps-1997",
+	"20_07_wpre_wps-2001",
+	"20_07_wpre_wps-2006",
+	"20_07_wpre_wps-2011",
+	"20_07_wpre_wps-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 日銀レビュー・シリーズ対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_wps_rev_rev_contentgroup_list = [
+	"10_07_wpre_rev-2004",
+	"10_07_wpre_rev-2006",
+	"10_07_wpre_rev-2011",
+	"10_07_wpre_rev-2016",
+	"10_07_wpre_ec",
+	"10_07_wpre_mkr",
+	"20_07_wpre_rev-2004",
+	"20_07_wpre_rev-2006",
+	"20_07_wpre_rev-2011",
+	"20_07_wpre_rev-2016",
+	"20_07_wpre_ec",
+	"20_07_wpre_mkr"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// 日銀リサーチラボ・シリーズ対応コンテンツグループリスト
+// contentgroup[index]
+var search_research_wps_rev_lab_contentgroup_list = [
+	"10_07_wpre_lab",
+	"20_07_wpre_lab"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Reports & Research Papers対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_brp_contentgroup_list = [
+	"20_07_brp",
+	"20_07_brp_fmr",
+	"20_07_brp_fsr",
+	"20_07_brp_psr",
+	"20_07_brp_rer",
+	"20_07_brp_ron-1996",
+	"20_07_brp_ron-2001",
+	"20_07_brp_ron-2006",
+	"20_07_brp_ron-2011",
+	"20_07_brp_ron-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Working Paper Series, Review Series, and Research Laboratory Series対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_wps_rev_contentgroup_list = [
+	"20_07_wpre",
+	"20_07_wpre_ec",
+	"20_07_wpre_lab",
+	"20_07_wpre_mkr",
+	"20_07_wpre_rev-2004",
+	"20_07_wpre_rev-2006",
+	"20_07_wpre_rev-2011",
+	"20_07_wpre_rev-2016",
+	"20_07_wpre_wps-1998",
+	"20_07_wpre_wps-2001",
+	"20_07_wpre_wps-2006",
+	"20_07_wpre_wps-2011",
+	"20_07_wpre_wps-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Study Group Reports対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_other_release_contentgroup_list = [
+	"20_07_other"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Financial System Report,Financial Markets Report 対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_brp_fsr_contentgroup_list = [
+	"20_07_brp_fsr"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Payment and Settlement Systems Report対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_brp_psr_contentgroup_list = [
+	"20_07_brp_psr"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Regional Economic Report対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_brp_rer_contentgroup_list = [
+	"20_07_brp_rer"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Research Papers対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_brp_ron_contentgroup_list = [
+	"20_07_brp_ron-1996",
+	"20_07_brp_ron-2001",
+	"20_07_brp_ron-2006",
+	"20_07_brp_ron-2011",
+	"20_07_brp_ron-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Working Paper Series対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_wps_rev_wps_contentgroup_list = [
+	"20_07_wpre_wps-1997",
+	"20_07_wpre_wps-2001",
+	"20_07_wpre_wps-2006",
+	"20_07_wpre_wps-2011",
+	"20_07_wpre_wps-2016"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Review Series対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_wps_rev_rev_contentgroup_list = [
+	"20_07_wpre_rev-2004",
+	"20_07_wpre_rev-2006",
+	"20_07_wpre_rev-2011",
+	"20_07_wpre_rev-2016",
+	"20_07_wpre_ec",
+	"20_07_wpre_mkr"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// Research Laboratory Series対応コンテンツグループリスト
+// contentgroup[index]
+var search_en_research_wps_rev_lab_contentgroup_list = [
+	"20_07_wpre_lab"
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// private method
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// 検索キーワード生成
+// qs_keyword1～3、qs_is_not_keyword1～3、qs_logical_operator1～2を合成し、
+// 一つのキーワードを生成する。
+function CreateSearch(){
+
+	var ret = '';
+	var keyword1 = $('#qs_keyword1').val();
+	var keyword2 = $('#qs_keyword2').val();
+	var keyword3 = $('#qs_keyword3').val();
+	var is_not_keyword1 = $('#qs_is_not_keyword1').prop('checked') ? '!' : '';
+	var is_not_keyword2 = $('#qs_is_not_keyword2').prop('checked') ? '!' : '';
+	var is_not_keyword3 = $('#qs_is_not_keyword3').prop('checked') ? '!' : '';
+	var logical_operator1 = (1 == $('#qs_logical_operator1').prop('selectedIndex')) ? '|' : '&';
+	var logical_operator2 = (1 == $('#qs_logical_operator2').prop('selectedIndex')) ? '|' : '&';
+	
+	if('' == keyword1)
+	{
+		return ret;
+	}
+	ret = ret + '(' + is_not_keyword1 + keyword1 + ')';
+	
+	if('' == keyword2)
+	{
+		return ret;
+	}
+	ret = '(' + ret + logical_operator1 + '(' + is_not_keyword2 + keyword2 + ')' + ')';
+	
+	if('' == keyword3)
+	{
+		return ret;
+	}
+	ret = '(' + ret + logical_operator2 + '(' + is_not_keyword3 + keyword3 + ')' + ')';
+	return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 下限期間指定日生成
+// qs_year_lessとqs_month_lessから、'YYYY/MM/01 00:00'フォーマット日付を合成する。
+function CreateDateLess(){
+
+	var year_less = $('#qs_year_less option:selected').val();
+	var month_less = $('#qs_month_less option:selected').val();
+	var ret = year_less + '/' + month_less + '/01 00:00';
+	return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 上限期間指定日生成
+// qs_year_moreとqs_month_moreから、'YYYY/MM/31 23:59'フォーマット日付を合成する。
+function CreateDateMore(){
+
+	var year_more = $('#qs_year_more option:selected').val();
+	var month_more = $('#qs_month_more option:selected').val();
+	var ret = year_more + '/' + month_more + '/31 23:59';
+	return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// フォームへのコンテンツグループ(inputタグ)追加
+function AppendContentGroups($qsform,list){
+
+	for(var i = 0 ; i < list.length ; i++){
+		$qsform.append($('<input/>', {type:'hidden', name:'contentgroup', value:list[i]}));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// フォームへの論文・レポート指定絞込み追加
+// get-contentgroup-string(var)
+function AppendRonbunCondition($qsform,condition_title){
+
+	switch(condition_title){
+		case '日本銀行レポート・調査論文':
+			AppendContentGroups($qsform,search_research_brp_contentgroup_list);
+			break;
+		case 'ワーキングペーパー・日銀レビュー・日銀リサーチラボ':
+			AppendContentGroups($qsform,search_research_wps_rev_contentgroup_list);
+			break;
+		case 'その他報告書等':
+			AppendContentGroups($qsform,search_research_other_release_contentgroup_list);
+			break;
+		case '金融システムレポート・金融市場レポート':
+			AppendContentGroups($qsform,search_research_brp_fsr_contentgroup_list);
+			break;
+		case '決済システムレポート':
+			AppendContentGroups($qsform,search_research_brp_psr_contentgroup_list);
+			break;
+		case 'さくらレポート':
+			AppendContentGroups($qsform,search_research_brp_rer_contentgroup_list);
+			break;
+		case '調査論文':
+			AppendContentGroups($qsform,search_research_brp_ron_contentgroup_list);
+			break;
+		case '日本銀行ワーキングペーパーシリーズ':
+			AppendContentGroups($qsform,search_research_wps_rev_wps_contentgroup_list);
+			break;
+		case '日銀レビュー・シリーズ':
+			AppendContentGroups($qsform,search_research_wps_rev_rev_contentgroup_list);
+			break;
+		case '日銀リサーチラボ・シリーズ':
+			AppendContentGroups($qsform,search_research_wps_rev_lab_contentgroup_list);
+			break;
+			
+		case 'Reports & Research Papers':
+			AppendContentGroups($qsform,search_research_brp_contentgroup_list);
+			break;
+		case 'Working Paper Series, Review Series, and Research Laboratory Series':
+			AppendContentGroups($qsform,search_en_research_wps_rev_contentgroup_list);
+			break;
+		case 'Study Group Reports':
+			AppendContentGroups($qsform,search_en_research_other_release_contentgroup_list);
+			break;
+		case 'Financial System Report,Financial Markets Report':
+			AppendContentGroups($qsform,search_en_research_brp_fsr_contentgroup_list);
+			break;
+		case 'Payment and Settlement Systems Report':
+			AppendContentGroups($qsform,search_en_research_brp_psr_contentgroup_list);
+			break;
+		case 'Regional Economic Report':
+			AppendContentGroups($qsform,search_en_research_brp_rer_contentgroup_list);
+			break;
+		case 'Research Papers':
+			AppendContentGroups($qsform,search_en_research_brp_ron_contentgroup_list);
+			break;
+		case 'Working Paper Series':
+			AppendContentGroups($qsform,search_en_research_wps_rev_wps_contentgroup_list);
+			break;
+		case 'Review Series':
+			AppendContentGroups($qsform,search_en_research_wps_rev_rev_contentgroup_list);
+			break;
+		case 'Research Laboratory Series':
+			AppendContentGroups($qsform,search_en_research_wps_rev_lab_contentgroup_list);
+			break;
+		default:
+			break;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 検索フォーム生成（引き継ぎ用検索条件）（ロゴ＆サイト内検索部品）
+// 検索結果表示時の条件引き継ぎ表示用のタグをここで追加する。
+function CreateSimpleSearchConditionForm($qsform){
+
+	var val;
+	
+	var qsk = $('#qs_keyword').val();
+	if( qsk != null && qsk != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsk1', value:qsk}));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 検索フォーム生成（引き継ぎ用検索条件）（検索前ページ）
+// 検索結果表示時の条件引き継ぎ表示用のタグをここで追加する。
+function CreateNarrowDownSearchConditionForm($qsform){
+
+	var val;
+	
+	// qs_ronbun
+	val = $('#qs_ronbun').val();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsrs', value:val}));
+	}
+	
+	// qs_officer
+	val = $('#qs_officer').val();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsos', value:val}));
+	}
+	
+	// qs_narrow_down_keyword
+	val = $('#qs_narrow_down_keyword').val();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsk1', value:val}));
+	}
+	
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 検索フォーム生成（引き継ぎ用検索条件）（検索結果ページ）
+// 検索結果表示時の条件引き継ぎ表示用のタグをここで追加する。
+function CreateDetailSearchConditionForm($qsform){
+
+	var val;
+	
+	// qs_keyword1
+	val = $('#qs_keyword1').val();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsk1', value:val}));
+	}
+	
+	// qs_keyword2
+	val = $('#qs_keyword2').val();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsk2', value:val}));
+	}
+	
+	// qs_keyword3
+	val = $('#qs_keyword3').val();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsk3', value:val}));
+	}
+	
+	// qs_is_not_keyword1
+	val = $('#qs_is_not_keyword1').is(':checked');
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsink1', value:val}));
+	}
+	
+	// qs_is_not_keyword2
+	val = $('#qs_is_not_keyword2').is(':checked');
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsink2', value:val}));
+	}
+	
+	// qs_is_not_keyword3
+	val = $('#qs_is_not_keyword3').is(':checked');
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsink3', value:val}));
+	}
+	
+	// qs_logical_operator1
+	val = $('#qs_logical_operator1').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qslo1', value:val}));
+	}
+	
+	// qs_logical_operator2
+	val = $('#qs_logical_operator2').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qslo2', value:val}));
+	}
+	
+	// qs_target_select
+	val = $('#qs_target_select').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsts', value:val}));
+	}
+	
+	// qs_ronbun_select
+	val = $('#qs_ronbun_select option:selected').text();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsrs', value:val}));
+	}
+	
+	// qs_officer_select
+	val = $('#qs_officer_select option:selected').text();
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsos', value:val}));
+	}
+	
+	// qs_has_date
+	val = $('#qs_has_date').is(':checked');
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qshd', value:val}));
+	}
+	
+	// qs_year_less
+	val = $('#qs_year_less').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsyl', value:val}));
+	}
+	
+	// qs_month_less
+	val = $('#qs_month_less').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsml', value:val}));
+	}
+	
+	// qs_year_more
+	val = $('#qs_year_more').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsym', value:val}));
+	}
+	
+	// qs_month_more
+	val = $('#qs_month_more').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsmm', value:val}));
+	}
+	
+	// qs_sort_select
+	val = $('#qs_sort_select').prop("selectedIndex");
+	if( val != null && val != '' ) {
+		$qsform.append($('<input/>', {type:'hidden', name:'qsss', value:val}));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 検索フォーム生成（共通）
+// 全検索フォームにて共通のタグのみここで追加する。
+function CreateCommonSearchForm(){
+	
+	// 古いフォーム削除
+	$('#qs_searchform').remove();
+	
+	// 送信フォーム生成
+	var $qsform = $('<form/>', {id:'qs_searchform', action:'/qssearch.jsp', method:'GET'});
+	$qsform.hide();
+	$qsform.appendTo(document.body);
+	
+	// インデックス名：個別指定
+	
+	// 検索方法：キーワード検索
+	$qsform.append($('<input/>', {type:'hidden', name:'searchtype', value:'kw'}));
+	
+	// 1ページ当たりの最大表示件数：10件
+	$qsform.append($('<input/>', {type:'hidden', name:'limit', value:'10'}));
+	
+	// キーワード：個別指定
+	
+	// 期間指定：個別指定
+	
+	// 絞込み：個別指定
+	
+	// ソート順：個別指定
+	
+	return $qsform;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 検索フォーム生成（検索結果ページ共通）
+// 検索結果ページの検索フォームにて共通のタグのみここで追加する。
+function CreateCommonDetailSearchForm(){
+
+	// 検索フォーム生成（共通）
+	var $qsform = CreateCommonSearchForm();
+	
+	// ユーザ入力項目パラメータ設定
+	CreateDetailSearchConditionForm($qsform);
+	
+	// インデックス名：カテゴリ（"検索箇所（全体orタイトル）"）（日英or英語）
+	$qsform.append($('<input/>', {type:'hidden', name:'indexname',
+		value:indexname_list[$('#qs_language').val()][$('#qs_category').val()][$('#qs_target_select').prop('selectedIndex')]}));
+	
+	// キーワード：検索結果ページ条件組み合わせ
+	$qsform.append($('<input/>', {type:'hidden', name:'search', value:CreateSearch()}));
+	
+	// 期間指定：metainfo1
+	if($('#qs_has_date')){
+		// 期間指定チェックボックスがある場合のみ
+		if($('#qs_has_date').prop('checked')){
+			// 期間指定検索が有効の場合のみ
+			$qsform.append($('<input/>', {type:'hidden', name:'metainfo1_less', value:CreateDateLess()}));
+			$qsform.append($('<input/>', {type:'hidden', name:'metainfo1_more', value:CreateDateMore()}));
+		}
+	}
+	
+	// 絞込み：個別指定
+	
+	// ソート順：関連性順（Similarity desc） または 日付順（降順）（metainfo1 desc,metainfo5 desc）
+	$qsform.append($('<input/>', {type:'hidden', name:'sort', value:function(){
+		if($('#qs_sort_select')){
+			// ソート順選択プルダウンがある場合（全体検索時以外）
+			if(1 == $('#qs_sort_select').prop('selectedIndex')){
+				// 日付順（降順）選択
+				return 'metainfo1 desc,metainfo5 asc';
+			}
+			else{
+				// 関連性順選択
+				return 'Similarity desc';
+			}
+		}
+		else{
+			// ソート順選択プルダウンがない場合（全体検索時）
+			// 関連性順
+			return 'Similarity desc';
+		}
+	}}));
+	
+	return $qsform;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// ハッシュマップ値取得（NULL無視）
+function GetValueNullToSkip(param_array, key){
+	var ret = '';
+	var val = param_array[key];
+	if ( val != null && val != '') {
+		ret = '&' + key + '=' + encodeURIComponent(val);
+	}
+	return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 引き継ぎ用検索条件URLパラメータ生成
+// onLoad()時のhref書き換えに使用
+function CreateSearchConditionURL(param_array){
+
+	var ret = "";
+	
+	// qs_keyword1
+	ret += GetValueNullToSkip(param_array, 'qsk1');
+	
+	// qs_keyword2
+	ret += GetValueNullToSkip(param_array, 'qsk2');
+	
+	// qs_keyword3
+	ret += GetValueNullToSkip(param_array, 'qsk3');
+	
+	// qs_is_not_keyword1
+	ret += GetValueNullToSkip(param_array, 'qsink1');
+	
+	// qs_is_not_keyword2
+	ret += GetValueNullToSkip(param_array, 'qsink2');
+	
+	// qs_is_not_keyword3
+	ret += GetValueNullToSkip(param_array, 'qsink3');
+	
+	// qs_logical_operator1
+	ret += GetValueNullToSkip(param_array, 'qslo1');
+	
+	// qs_logical_operator2
+	ret += GetValueNullToSkip(param_array, 'qslo2');
+	
+	// qs_target_select
+	ret += GetValueNullToSkip(param_array, 'qsts');
+	
+	// qs_ronbun_select
+	ret += GetValueNullToSkip(param_array, 'qsrs');
+	
+	// qs_officer_select
+	ret += GetValueNullToSkip(param_array, 'qsos');
+	
+	// qs_has_date
+	ret += GetValueNullToSkip(param_array, 'qshd');
+	
+	// qs_year_less
+	ret += GetValueNullToSkip(param_array, 'qsyl');
+	
+	// qs_month_less
+	ret += GetValueNullToSkip(param_array, 'qsml');
+	
+	// qs_year_more
+	ret += GetValueNullToSkip(param_array, 'qsym');
+	
+	// qs_month_more
+	ret += GetValueNullToSkip(param_array, 'qsmm');
+	
+	// qs_sort_select
+	ret += GetValueNullToSkip(param_array, 'qsss');
+	
+	return ret;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 画面入力項目値設定（NULL無視）
+function SetValueNullToSkip(param_array, key, target){
+	var val = param_array[key];
+	if ( val != null) {
+		$(target).attr("value", val);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// セレクトボックス選択（index指定）（NULL無視）
+function SelectOptionByIndexNullToSkip(param_array, key, target){
+	var index = param_array[key];
+	if ( index != null) {
+		$(target).prop('selectedIndex', index);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// セレクトボックス選択（表示値指定）（NULL無視）
+function SelectOptionNullToSkip(param_array, key, target){
+	var text = param_array[key];
+	if ( text != null) {
+		$(target+' option').filter(function(index){
+			return $(this).text() === text;
+		}).prop('selected', true);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// セレクトボックス選択（ID指定）（NULL無視）
+function SelectOptionByIDNullToSkip(param_array, key, target){
+        var text = param_array[key];
+        if ( text != null) {
+                $(target+' option').filter(function(index){
+                        return $(this).id === text;
+                }).prop('selected', true);
+        }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// チェックボックス選択処理（NULL無視）
+function CheckCheckNullToSkip(param_array, key, target){
+	var val = param_array[key];
+	if ( val != null) {
+		if( val == 'true' ) {
+			$(target).attr("checked", "checked");
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 引き継ぎ用検索条件設定
+// onLoad()時の初期入力項目設定に使用
+function SetSearchConditionHTML(param_array){
+
+	// qs_keyword1
+	SetValueNullToSkip(param_array, 'qsk1', '#qs_keyword1');
+	
+	// qs_keyword2
+	SetValueNullToSkip(param_array, 'qsk2', '#qs_keyword2');
+	
+	// qs_keyword3
+	SetValueNullToSkip(param_array, 'qsk3', '#qs_keyword3');
+	
+	// qs_is_not_keyword1
+	CheckCheckNullToSkip(param_array, 'qsink1', '#qs_is_not_keyword1');
+	
+	// qs_is_not_keyword2
+	CheckCheckNullToSkip(param_array, 'qsink2', '#qs_is_not_keyword2');
+	
+	// qs_is_not_keyword3
+	CheckCheckNullToSkip(param_array, 'qsink3', '#qs_is_not_keyword3');
+	
+	// qs_logical_operator1
+	SelectOptionByIndexNullToSkip(param_array, 'qslo1', '#qs_logical_operator1');
+	
+	// qs_logical_operator2
+	SelectOptionByIndexNullToSkip(param_array, 'qslo2', '#qs_logical_operator2');
+	
+	// qs_target_select
+	SelectOptionByIndexNullToSkip(param_array, 'qsts', '#qs_target_select');
+	
+	// qs_ronbun_select
+	SelectOptionNullToSkip(param_array, 'qsrs', '#qs_ronbun_select');
+	SelectOptionNullToSkip(param_array, 'qsrs', '#qs_ronbun_select');
+	
+	// qs_officer_select
+	//SelectOptionNullToSkip(param_array, 'qsos', '#qs_officer_select');
+	SelectOptionNullToSkip(param_array, 'qsos', '#qs_officer_select');
+
+	// qs_has_date
+	CheckCheckNullToSkip(param_array, 'qshd', '#qs_has_date');
+	
+	// qs_year_less
+	SelectOptionByIndexNullToSkip(param_array, 'qsyl', '#qs_year_less');
+	
+	// qs_month_less
+	SelectOptionByIndexNullToSkip(param_array, 'qsml', '#qs_month_less');
+	
+	// qs_year_more
+	SelectOptionByIndexNullToSkip(param_array, 'qsym', '#qs_year_more');
+	
+	// qs_month_more
+	SelectOptionByIndexNullToSkip(param_array, 'qsmm', '#qs_month_more');
+	
+	// qs_sort_select
+	SelectOptionByIndexNullToSkip(param_array, 'qsss', '#qs_sort_select');
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// public method
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// サイト内検索：簡易検索フォーム（絞込み）（日英・英語）
+function QSSimpleNarrowDownSearchOnSubmit(){
+
+	// 送信フォーム生成
+	var $qsform = CreateCommonSearchForm();
+	
+	// ユーザ入力項目パラメータ設定
+	CreateNarrowDownSearchConditionForm($qsform);
+	
+	// インデックス名：検索箇所（ページ全体）
+	$qsform.append($('<input/>', {type:'hidden', name:'indexname', value:$('#qs_indexname').val()}));
+	
+	// キーワード：検索前ページ
+	$qsform.append($('<input/>', {type:'hidden', name:'search', value:$('#qs_narrow_down_keyword').val()}));
+	
+	// 絞込み：contentgroup
+	if($('#qs_ronbun').val()){
+		// 指定有りの場合のみ
+		$qsform.append($('<input/>', {type:'hidden', name:'contentgroup', value:function(){
+			return AppendRonbunCondition($qsform,$('#qs_ronbun').val());
+		}}));
+	}
+	
+	// 絞込み：metainfo2,metainfo5,metainfo4
+	if($('#qs_officer').val()){
+		// 指定有りの場合のみ
+		$qsform.append($('<input/>', {type:'hidden', name:'metainfo2', value:$('#qs_officer').val()}));
+		$qsform.append($('<input/>', {type:'hidden', name:'metainfo3', value:$('#qs_officer').val()}));
+		$qsform.append($('<input/>', {type:'hidden', name:'metainfo4', value:$('#qs_officer').val()}));
+	}
+	
+	// ソート順：関連性順（Similarity desc）
+	$qsform.append($('<input/>', {type:'hidden', name:'sort', value:'Similarity desc'}));
+	
+	// フォーム送信
+	$qsform.submit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// サイト内検索：簡易検索フォーム（全体）（日英）
+function QSSimpleSearchOnSubmit(){
+
+	// 送信フォーム生成
+	var $qsform = CreateCommonSearchForm();
+	
+	// ユーザ入力項目パラメータ設定
+	CreateSimpleSearchConditionForm($qsform);
+	
+	// インデックス名：
+	// インデックス名：[日英or英語][全体][ページ全体]
+	$qsform.append($('<input/>', {type:'hidden', name:'indexname',
+		value:indexname_list[$('#qs_sslang').val()][IDX_CATEGORY_ALL][IDX_TARGET_PAGE]}));
+	
+	// キーワード：ロゴ＆サイト内検索
+	$qsform.append($('<input/>', {type:'hidden', name:'search', value:$('#qs_keyword').val()}));
+	
+	// 期間指定：指定なし
+	
+	// 絞込み：指定なし
+	
+	// ソート順：関連性順（Similarity desc）
+	$qsform.append($('<input/>', {type:'hidden', name:'sort', value:'Similarity desc'}));
+	
+	// フォーム送信
+	$qsform.submit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// サイト内検索：詳細検索ページ（全体）（日英）
+function QSDetailSearchOnSubmit(){
+
+	// 送信フォーム生成：（全体）（日英）
+	var $qsform = CreateCommonDetailSearchForm();
+	
+	// 期間指定：指定なし
+	
+	// 絞込み：指定なし
+	
+	// フォーム送信
+	$qsform.submit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// サイト内検索：詳細検索ページ（調査・研究）（日英）
+function QSDetailRonbunSearchOnSubmit(){
+
+	// 送信フォーム生成：（調査・研究）（日英）
+	var $qsform = CreateCommonDetailSearchForm();
+	
+	// 絞込み：調査・研究カテゴリのタイトル絞込み
+	if($('#qs_ronbun_select option:selected').text() != "―") {
+		var contentgroup = $('#qs_ronbun_select option:selected').val();
+		var contentgroups = contentgroup.split("|");
+		for ( i = 0; i < contentgroups.length; i++ ) {
+			$qsform.append($('<input/>', {type:'hidden', name:'contentgroup', value:contentgroups[i]}));
+		}
+	}
+	
+	// フォーム送信
+	$qsform.submit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// サイト内検索：詳細検索ページ（講演・記者会見）（日英）
+function QSDetailKoenSearchOnSubmit(){
+
+	// 送信フォーム生成：（講演・記者会見）（日英）
+	var $qsform = CreateCommonDetailSearchForm();
+	
+	// 絞込み：講演・記者会見カテゴリの役員絞込み
+	if($('#qs_officer_select option:selected').text() != "―") {
+		$qsform.append($('<input/>', {type:'hidden', name:'metainfo2', value:$('#qs_officer_select option:selected').text()}));
+		$qsform.append($('<input/>', {type:'hidden', name:'metainfo3', value:$('#qs_officer_select option:selected').text()}));
+		$qsform.append($('<input/>', {type:'hidden', name:'metainfo4', value:$('#qs_officer_select option:selected').text()}));
+	}
+	
+	// フォーム送信
+	$qsform.submit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// サイト内検索：詳細検索ページ（公表資料）（日英）
+function QSDetailKohyoSearchOnSubmit(){
+
+	// 送信フォーム生成：（公表資料）（日英）
+	var $qsform = CreateCommonDetailSearchForm();
+	
+	// 絞込み：指定なし
+	
+	// フォーム送信
+	$qsform.submit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// オートコンプリート設定：サジェスト機能
+function SetAutocomplete( inputid, indexname ){
+
+	// オートコンプリート設定
+	$(inputid).autocomplete({
+		source: function(request, response){
+			$.ajax({
+				url: "/qskeyword.jsp",
+				type: "POST",
+				cache: false,
+				dataType: "json",
+				data: {search:request.term, limit:3, indexname:indexname},
+				success: function(o){
+					var result = new Array();
+					for (var i = 0; i < o.length ; i++) {
+						if (o[i].point > 0) {
+							result.push(o[i].keyword);
+						}
+					}
+					response(result);
+				},
+				error: function(xhr, ts, err){
+					response(['']);
+				}
+			});
+		},
+		search: function(event, ui){
+			if (event.keyCode == 229) return false;
+			return true;
+		},
+		open: function() {
+			$(this).removeClass("ui-corner-all");
+		}
+	})
+	.keyup(function(event){
+		if (event.keyCode == 13) {
+			$(this).autocomplete("search");
+		}
+	});
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// HTMLコード読込完了時処理：検索パラメータ引き継ぎ処理
+$(document).ready(function(){
+
+	if ( location.pathname.match("qssearch.jsp") ){
+	
+		// URLパラメータ取得
+		var param  = location.href;
+		param = param.replace(/\+/g,' ');
+		
+		var params = param.split("?");
+		params = params[1].split("&");
+		
+		var param_array = [];
+		var seed;
+		
+		// URLパラメータのデータ構造化
+		for ( i = 0; i < params.length; i++ ) {
+			seed = params[i].split("=");
+			param_array.push(decodeURIComponent(seed[0]));
+			param_array[seed[0]] = decodeURIComponent(seed[1]);
+		}
+		
+		// 引き継ぎパラメータの入力項目反映
+		SetSearchConditionHTML(param_array);
+		
+		// 引き継ぎパラメータのhref設定反映
+		var param_str = CreateSearchConditionURL(param_array);
+		$('#qs_pagelinks a').each(function() { 
+			$(this).attr('href',($(this).attr('href') + param_str));
+		});
+	}
+	
+	// オートコンプリート設定
+	if($('#qs_sslang')[0] && $('#qs_keyword')[0]) {
+		SetAutocomplete( '#qs_keyword', indexname_list[$('#qs_sslang').val()][IDX_CATEGORY_ALL][IDX_TARGET_PAGE]);
+	}
+	if($('#qs_indexname')[0] && $('#qs_narrow_down_keyword')[0]) {
+		SetAutocomplete( '#qs_narrow_down_keyword', $('#qs_indexname').val());
+	}
+	if($('#qs_language')[0] && $('#qs_category')[0] && $('#qs_keyword1')[0]) {
+		var indexname = indexname_list[$('#qs_language').val()][$('#qs_category').val()][$('#qs_target_select').prop('selectedIndex')];
+		SetAutocomplete( '#qs_keyword1', indexname);
+		SetAutocomplete( '#qs_keyword2', indexname);
+		SetAutocomplete( '#qs_keyword3', indexname);
+	}
+});
+

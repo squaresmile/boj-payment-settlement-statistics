@@ -1,0 +1,217 @@
+// JavaScript Common
+
+//Global Navigation
+$(function() {
+
+	var nav = $('.g-nav');	
+	var navTop = nav.offset().top;
+	$(window).scroll(function () {
+		var winTop = $(this).scrollTop();
+		if (winTop >= navTop) {
+			nav.addClass('fixed')
+		} else if (winTop <= navTop) {
+			nav.removeClass('fixed')
+		}
+	});
+
+	$('.dropmenu .nav01 a').focus( function () {
+		$('.dropmenu .nav01 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav01 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav02 a').focus( function () {
+		$('.dropmenu .nav02 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav02 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav03 a').focus( function () {
+		$('.dropmenu .nav03 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav03 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav04 a').focus( function () {
+		$('.dropmenu .nav04 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav04 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav05 a').focus( function () {
+		$('.dropmenu .nav05 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav05 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav06 a').focus( function () {
+		$('.dropmenu .nav06 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav06 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav07 a').focus( function () {
+		$('.dropmenu .nav07 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav07 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav08 a').focus( function () {
+		$('.dropmenu .nav08 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav08 .sub-nav').removeClass('focused');
+	});
+	$('.dropmenu .nav09 a').focus( function () {
+		$('.dropmenu .nav09 .sub-nav').addClass('focused');
+		}).blur(function(){
+		$('.dropmenu .nav09 .sub-nav').removeClass('focused');
+	});
+
+		$(function() {
+			$('.dropmenu .nav08 .sub-nav li').mouseover(function(){
+				$('.dropmenu .nav08 .sub-nav li').addClass('focused');
+				}).mouseout(function(){
+					$('.dropmenu .nav08 .sub-nav li').removeClass('focused');
+			});
+		});
+
+//tab
+	$('.tabbox:first').show();
+	$('#tab li:first').addClass('active');
+	$('#tab li').on('click', function() {
+		$('#tab li').removeClass('active');
+		$(this).addClass('active');
+		$('.tabbox').hide();
+		$($(this).find('a').attr('href')).fadeIn();
+		//alert($(this).find('a').attr('href'));
+		var chgtab = $(this).find('a').attr('href');
+		//alert(chgtab);
+		$.cookie( "bojstatisticstab" , chgtab );
+		return false;
+	});
+});
+
+//sm nav
+$(function(){
+	WindowHeight = $(window).height();
+	$('.g-nav').css('width', WindowHeight);
+	$(".g-nav").addClass('humburgerOpen');
+
+	$(document).ready(function() {
+		$('.sm-btn').on('click', function() {
+			$(this).toggleClass('close');
+			$('.g-nav').animate({height:'toggle'});
+			if($(this).hasClass('close')){
+				$(".g-nav").addClass('humburgerClose');
+				$(".g-nav").removeClass('humburgerOpen');
+				}else{
+				$(".g-nav").removeClass('humburgerClose');
+				$(".g-nav").addClass('humburgerOpen');
+				}
+		});
+	});
+	$('.dropmenu button').on('click', function() {
+		$(this).toggleClass("active");
+		$(this).siblings("button").removeClass("active");
+        //slideToggleのinline挙動へのFix
+		$(this).next(".sub-nav").slideToggle('slow',function(){
+            $(this).attr('style','').toggleClass('nav_open');
+        });
+        $(this).toggleClass("active");
+	});
+//g-nav
+	$(window).resize(function(){
+		var win = $(window).width();
+		var w = 959;
+		if(win > w){
+			$(".g-nav").show();
+			//alert(win);
+		}
+		else{
+			if($(".g-nav").hasClass('humburgerOpen')){
+				$(".g-nav").hide();
+				$('.sm-btn').removeClass('close');
+			}else{
+				$(".g-nav").show();
+				$('.sm-btn').addClass('close');
+
+			}
+		}
+	});
+	
+
+});
+
+$(function(){
+
+//scroll
+	$('a[href^=#]' + 'a:not(.non-scroll)').click(function () {
+	 var speed = 500;
+	 var href = $(this).attr("href");
+	 var target = $(href == "#" || href == "" ? 'html' : href);
+	if($(".g-nav").is(':visible')){
+		 var position = target.offset().top-60;
+	}else{
+		 var position = target.offset().top;
+	}
+	  $("html, body").animate({
+	   scrollTop: position
+	  }, speed, "swing");
+	 return false;
+	 });
+// Block Skipが正常に動作するための記述
+
+$(document).ready(function() {
+    $(".blockskip > a").click(function(evet){
+    var skipTo="#"+this.href.split('#')[1];
+    $(skipTo).attr('tabindex', -1).on('blur focusout', function(){
+    $(this).removeAttr('tabindex');
+    }).focus();
+    });
+});
+
+
+//for g-nav height setting when jump another page's anchor link
+$(function(){
+setTimeout(delayedFragmentTargetOffset, 50);
+});
+function delayedFragmentTargetOffset(){
+var offset = $(':target').offset();
+if(offset){
+var scrollto = offset.top-60;
+$("html, body").animate({scrollTop:scrollto},0);
+}
+}
+//page-top
+	var topBtn = $('#page-top');	
+	topBtn.hide();
+	$(window).scroll(function () {
+		if ($(this).scrollTop() > 100) {
+			topBtn.fadeIn();
+		} else {
+			topBtn.fadeOut();
+		}
+	});
+	topBtn.click(function () {
+		$('body,html').animate({
+			scrollTop: 0
+		}, 500);
+		return false;
+	});
+	
+});
+$(window).load(function(){
+//TO IE9
+	if (!$.support.noCloneChecked) {
+		$('.slick-arrow').css('z-index','1000');
+		$('.g-nav').css('z-index','2000');
+	}
+});
+
+//matchHeight
+$(function(){
+	$('.js-matchHeight').matchHeight();
+	$('.item > div').matchHeight();
+	$('.list-release a').matchHeight();
+	$('.education-box').matchHeight();
+	$('.education-box h3').matchHeight();
+	$('.column-inner').matchHeight();
+	$('.nav-box .description').matchHeight();
+	$('.nav-box .btn a span').matchHeight();
+	$('.column-search li a').matchHeight();
+	$('#statistics-tab li a').matchHeight();
+	$('.menu-box08 .tab-box li a').matchHeight();
+});
