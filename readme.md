@@ -10,13 +10,16 @@ For example, the link for the August 2018 publication is:
 
 For earlier data, please contact them at post.pr@boj.or.jp.
 
-You can also go to the [BOJ Time-Series Data Search](http://www.stat-search.boj.or.jp/index_en.html) to get some of the data available in the reports. The data is under the "Other Payment and Settlement Systems" category:
-  * Settlement via BOJ Accounts (a)/Value/Daily Average (`PS01'PMRA2`): Table 1-1 "Value" column
-  * Settlement via BOJ Accounts (a)/Number of Transactions (`PS01'PMRA3`): Table 1-1 "Volume" × [n](#notes "numbers of open days in the month")
-  * Settlement via BOJ Accounts (a)/Value (`PS01'PMRA4`): Table 1-1 "Value" column × [n](#notes "numbers of open days in the month")
-  * JGB Book-entry System (b)(c)/Number of Transactions (`PS01'PMRA@01`): : Table 3-1 (1) "Volume" column × [n](#notes "numbers of open days in the month")
-  * JGB Book-entry System (b)(c)/Value (`PS01'PMRA@02`): Table 3-1 (2) "Value" column × [n](#notes "numbers of open days in the month")
-  * JGB Book-entry System (b)(c)/Value/Daily Average (`PS01'PMRA@03`): Table 3-1 (2) "Value" column
+You can also go to the [BOJ Time-Series Data Search](http://www.stat-search.boj.or.jp/index_en.html) to get some of the data available in the reports. The data is under the "Other Payment and Settlement Systems" category. Below is the mapping of the available time series to their locations in the PDF:
+
+| Time series dataset | Location in the PDF |
+|---|---|
+| `PS01'PMRA2` Settlement via BOJ Accounts (a)/Value/Daily Average | Table 1-1 "Value" column |
+| `PS01'PMRA3` Settlement via BOJ Accounts (a)/Number of Transactions | Table 1-1 "Volume" × [n](#notes "numbers of open days in the month") |
+| `PS01'PMRA4` Settlement via BOJ Accounts (a)/Value | Table 1-1 "Value" column × [n](#notes "numbers of open days in the month") |
+| `PS01'PMRA@01` JGB Book-entry System (b)(c)/Number of Transactions | Table 3-1 (1) "Volume" column × [n](#notes "numbers of open days in the month") |
+| `PS01'PMRA@02` JGB Book-entry System (b)(c)/Value | Table 3-1 (2) "Value" column × [n](#notes "numbers of open days in the month") |
+| `PS01'PMRA@03` JGB Book-entry System (b)(c)/Value/Daily Average | Table 3-1 (2) "Value" column |
 
 #### Notes
 
